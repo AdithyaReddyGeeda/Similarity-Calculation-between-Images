@@ -1,0 +1,38 @@
+import cv2
+from skimage import io, color
+from skimage.metrics import structural_similarity as ssim
+
+def resize_image(image, target_width, target_height):
+    return cv2.resize(image, (target_width, target_height))
+
+def calculate_image_similarity(image_path1, image_path2, target_width, target_height):
+    try:
+        # Load and resize the images to a common size
+        image1 = resize_image(io.imread(image_path1), target_width, target_height)
+        image2 = resize_image(io.imread(image_path2), target_width, target_height)
+
+        # Convert images to grayscale
+        image1_gray = color.rgb2gray(image1)
+        image2_gray = color.rgb2gray(image2)
+
+        # Calculate SSIM (Structural Similarity Index)
+        similarity = ssim(image1_gray, image2_gray)
+
+        return similarity
+
+    except Exception as e:
+        print("Error:", e)
+        return None
+
+if __name__ == "__main__":
+    image_path1 = "messi.jpg"  # Replace with the path to your first image
+    image_path2 = "messi grayscale.jpg"  # Replace with the path to your second image
+    target_width = 128        # Set the common width for resizing
+    target_height = 128       # Set the common height for resizing
+
+    similarity = calculate_image_similarity(image_path1, image_path2, target_width, target_height)
+
+    if similarity is not None:
+        print(f"SSIM Similarity: {similarity:.2f}")
+    else:
+        print("Unable to calculate similarity.")
